@@ -23,7 +23,7 @@ using namespace std;
 class Global {
 public:
 	int xres, yres;
-	float r, g, b;
+	float r, g, b, zg, zb;
 	Global();
 } g;
 
@@ -80,6 +80,11 @@ Global::Global()
 {
 	xres = 400;
 	yres = 200;
+	r = 150;
+	g = 160;
+	b = 220;
+	zb = 0;
+	zg = 0;
 }
 
 X11_wrapper::~X11_wrapper()
@@ -251,30 +256,43 @@ void render()
 	static float dir = 25.0f;
 	static float pos[2] = {0.0f+w, g.yres/2.0f};
 	//
-	glClear(GL_COLOR_BUFFER_BIT);
-	//Draw box.
-	glPushMatrix();
+		glClear(GL_COLOR_BUFFER_BIT);
+		//Draw box.
+		if (pos[0] < w) // stops drawing box is the border is smaller than the width of the box
+		{}
+		else
+		glPushMatrix();
 
-	glColor3ub(g.r, g.g, g.b);
-	glColor3ub(150, 160, 220);
-	
-	glTranslatef(pos[0], pos[1], 0.0f);
-	glBegin(GL_QUADS);
-		glVertex2f(-w, -w);
-		glVertex2f(-w,  w);
-		glVertex2f( w,  w);
-		glVertex2f( w, -w);
-	glEnd();
-	glPopMatrix();
-	pos[0] += dir;
-	if (pos[0] >= (g.xres-w)) {
-		pos[0] = (g.xres-w);
-		dir = -dir;
-	}
-	if (pos[0] <= w) {
-		pos[0] = w;
-		dir = -dir;
-	}
+		
+		//glColor3ub(150, 160, 220);
+		
+		glTranslatef(pos[0], pos[1], 0.0f);
+		glBegin(GL_QUADS);
+			glVertex2f(-w, -w);
+			glVertex2f(-w,  w);
+			glVertex2f( w,  w);
+			glVertex2f( w, -w);
+		glEnd();
+		glPopMatrix();
+		pos[0] += dir;
+		if (pos[0] >= (g.xres-w)) {
+			pos[0] = (g.xres-w);
+			dir = -dir;
+			glColor3ub(g.r, g.zg = 0, g.zb = 0); // resets g.zg and g.zb to 0 after hitting border
+		}
+		else if (pos[0] <= w) {
+			pos[0] = w;
+			dir = -dir;
+			glColor3ub(g.r, g.zg = 0, g.zb = 0); // resets g.zg and g.zb to 0 after hitting border
+		}
+		else{
+			if(g.zg < g.g) // starts at 0 and adds until reaching 160 -- GREEN
+				g.zg += 15;
+			if(g.zb < g.b) // starts at 0 and adds until reaching 220 -- BLUE
+				g.zb += 27;
+			glColor3ub(g.r, g.zg, g.zb);
+		}
+
 }
 
 
