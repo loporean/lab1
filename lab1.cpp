@@ -287,9 +287,9 @@ void render()
 		}
 		else{
 			if(g.zg < g.g) // starts at 0 and adds until reaching 160 -- GREEN
-				g.zg += 15;
+				g.zg += 7;
 			if(g.zb < g.b) // starts at 0 and adds until reaching 220 -- BLUE
-				g.zb += 27;
+				g.zb += 13;
 			glColor3ub(g.r, g.zg, g.zb);
 		}
 
